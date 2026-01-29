@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interaktywny przewodnik po zdrowym stylu życia, kalkulator BMI i przepisy. Autor: Damian Kita.">
+    <title>Zdrowy Styl Życia | Damian Kita</title>
+    
+    <!-- Import czcionek Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- ZMIENNE (LIGHT MODE) --- */
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --accent-color: #FF9800;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --bg-light: #f9fbfd;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --input-bg: #ffffff;
+            --border-color: #ddd;
+        }
+
+        /* --- ZMIENNE (DARK MODE) --- */
+        [data-theme="dark"] {
+            --primary-color: #66bb6a;
+            --primary-dark: #81c784;
+            --accent-color: #ffb74d;
+            --text-dark: #e0e0e0;
+            --text-light: #b0b0b0;
+            --bg-light: #121212;
+            --white: #1e1e1e; /* Ciemny szary dla kart */
+            --shadow: 0 4px 10px rgba(0,0,0,0.5);
+            --nav-bg: rgba(30, 30, 30, 0.95);
+            --input-bg: #2c2c2c;
+            --border-color: #444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- THEME TOGGLE BUTTON --- */
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        
+        /* Hover w trybie ciemnym */
+        [data-theme="dark"] .theme-toggle-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .theme-toggle-btn svg {
+            width: 24px;
+            height: 24px;
+            display: none;
+        }
+
+        /* Pokaż odpowiednią ikonę */
+        [data-theme="dark"] .theme-toggle-btn .moon-icon { display: block; }
+        :root:not([data-theme="dark"]) .theme-toggle-btn .sun-icon { display: block; }
+
+        /* --- NAVIGACJA --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+            padding: 1rem 5%;
+            transition: background-color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        /* Konkretny styl dla Nav w trybie ciemnym (Ciemne tło, jasny tekst) */
+        [data-theme="dark"] nav {
+            background: rgba(30, 30, 30, 0.95);
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+        
+        /* Logo białe w trybie ciemnym dla lepszej kontrastowości */
+        [data-theme="dark"] .logo { color: #e0e0e0; }
+        [data-theme="dark"] .logo span { color: var(--accent-color); }
+
+        .logo span { color: var(--accent-color); }
+
+        .nav-center {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            transition: var(--transition);
+            color: var(--text-dark);
+        }
+
+        .nav-links a:hover { color: var(--primary-color); }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        /* --- HERO SECTION (PIERWSZE OKNO) --- */
+        /* Tu pozostawiamy białe napisy na obrazku niezależnie od motywu */
+        header.hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://picsum.photos/seed/fitness/1920/1080');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #ffffff; /* Zawsze biały tekst */
+            padding: 0 1rem;
+            margin-top: 0;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 30px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #ffffff; /* Zawsze biała ramka w hero */
+            margin-left: 1rem;
+            color: #ffffff;
+        }
+
+        .btn-outline:hover {
+            background-color: #ffffff;
+            color: var(--primary-color);
+        }
+
+        /* --- SEKCJE OGÓLNE --- */
+        section {
+            padding: 5rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title .underline {
+            width: 80px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        /* --- DLA CZEGO WARTO (KARTY) --- */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .benefit-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .benefit-card:hover { transform: translateY(-5px); }
+
+        .icon-box {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        /* --- KALKULATOR BMI --- */
+        .bmi-section {
+            background-color: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 3rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .bmi-controls {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .bmi-result-area {
+            flex: 1;
+            min-width: 300px;
+            background: var(--bg-light);
+            border-radius: var(--radius);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--input-bg);
+            color: var(--text-dark);
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .input-group select option {
+            background-color: var(--white);
+            color: var(--text-dark);
+        }
+        [data-theme="dark"] .input-group select option {
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+        }
+
+        .error-msg {
+            color: #e57373;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Wskaźnik BMI */
+        .bmi-gauge-container {
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to right, #64b5f6 0%, #64b5f6 18.5%, #81c784 18.5%, #81c784 50%, #ffb74d 50%, #ffb74d 75%, #e57373 75%, #e57373 100%);
+            border-radius: 10px;
+            position: relative;
+            margin: 2rem 0 1rem 0;
+        }
+
+        .bmi-marker {
+            position: absolute;
+            top: -6px;
+            width: 4px;
+            height: 32px;
+            background-color: #333;
+            border: 2px solid white;
+            border-radius: 2px;
+            left: 0%;
+            transition: left 0.5s ease-out;
+            transform: translateX(-50%);
+        }
+        [data-theme="dark"] .bmi-marker {
+            background-color: #eee;
+            border-color: #121212;
+        }
+
+        .bmi-value-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .bmi-category {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .bmi-description {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        /* --- PRZEPISY --- */
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .recipe-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .recipe-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recipe-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .recipe-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .recipe-details {
+            background-color: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: auto;
+            font-size: 0.9rem;
+            display: none;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .recipe-details.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toggle-recipe-btn {
+            margin-top: 1rem;
+            background: none;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            align-self: flex-start;
+        }
+
+        .toggle-recipe-btn:hover {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* --- AUTOR --- */
+        .author-section {
+            text-align: center;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .author-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid var(--primary-color);
+            object-fit: cover;
+        }
+
+        .author-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            padding: 10px 20px;
+            border: 1px solid var(--primary-dark);
+            border-radius: 30px;
+            transition: var(--transition);
+        }
+
+        .author-link:hover {
+            background: var(--primary-dark);
+            color: var(--white);
+        }
+
+        /* --- FOOTER (STANDARD DARK MODE) --- */
+        footer {
+            /* Tryb Jasny */
+            background-color: #2c3e50; /* Ciemny granat, pasuje do jasnego motywu */
+            color: #ffffff;
+            padding: 2rem 5%;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Tryb Ciemny - Nadpisanie */
+        [data-theme="dark"] footer {
+            background-color: #121212; /* Bardzo ciemne tło */
+            border-top: 1px solid #333;
+            color: #cccccc;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: var(--nav-bg);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: 0.4s;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+
+            /* Menu mobilne w trybie ciemnym - ciemne tło */
+            [data-theme="dark"] .nav-links {
+                background: #1e1e1e;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .hero-content h1 { font-size: 2rem; }
+            .bmi-section { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nawigacja -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary-color)"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Fit<span>Life</span>
+            </a>
+            
+            <div class="nav-center">
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="#home">Start</a></li>
+                    <li><a href="#benefits">Zalety</a></li>
+                    <li><a href="#bmi">Kalkulator BMI</a></li>
+                    <li><a href="#recipes">Przepisy</a></li>
+                    <li><a href="#author">O Autorze</a></li>
+                </ul>
+
+                <!-- Przycisk trybu ciemnego -->
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Przełącz motyw">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+
+                <div class="hamburger" id="hamburger">
+                    &#9776;
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero" id="home">
+        <div class="hero-content">
+            <h1>Zainwestuj w swoje zdrowie</h1>
+            <p>Odkryj potęgę ruchu, zbilansowanej diety i pozytywnego myślenia. Twoja droga do lepszej wersji siebie zaczyna się tutaj.</p>
+            <a href="#bmi" class="btn">Sprawdź swoje BMI</a>
+            <a href="#recipes" class="btn btn-outline">Zobacz przepisy</a>
+        </div>
+    </header>
+
+    <!-- Zalety zdrowego stylu życia -->
+    <section id="benefits">
+        <div class="section-title">
+            <h2>Dlaczego warto?</h2>
+            <div class="underline"></div>
+        </div>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon-box">❤️</div>
+                <h3>Zdrowe Serce</h3>
+                <p>Regularna aktywność fizyczna wzmacnia serce, poprawia krążenie i obniża ryzyko chorób układu krążenia.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-box">🧠</div>
+                <h3>Lepszy Nastrój</h3>
+                <p>Sport redukuje poziom stresu i lęku, wydzielając endorfiny - hormony szczęścia.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon-box">⚡</div>
+                <h3>Więcej Energii</h3>
+                <p>Zdrowa dieta i ruch zwiększają wydajność organizmu, dając Ci siłę do codziennych wyzwań.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kalkulator BMI -->
+    <section id="bmi">
+        <div class="section-title">
+            <h2>Oblicz swoje BMI</h2>
+            <div class="underline"></div>
+            <p style="margin-top:10px; color:var(--text-light);">Wskaźnik masy ciała (BMI) to szybki sposób na ocenę prawidłowości masy ciała.</p>
+        </div>
+
+        <div class="bmi-section">
+            <div class="bmi-controls">
+                <form id="bmiForm" onsubmit="event.preventDefault(); calculateBMI();">
+                    <div class="input-group">
+                        <label for="weight">Waga (kg)</label>
+                        <input type="number" id="weight" placeholder="np. 75" min="1" step="0.1" required>
+                        <div id="weightError" class="error-msg">Podaj prawidłową wagę.</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="height">Wzrost (cm)</label>
+                        <input type="number" id="height" placeholder="np. 180" min="1" step="1" required>
+                        <div id="heightError" class="error-msg">Podaj prawidłowy wzrost.</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="gender">Płeć</label>
+                        <select id="gender">
+                            <option value="m">Mężczyzna</option>
+                            <option value="k">Kobieta</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Oblicz</button>
+                </form>
+            </div>
+
+            <div class="bmi-result-area">
+                <h3>Twój wynik</h3>
+                <div id="bmiValue" class="bmi-value-display">--</div>
+                <div id="bmiCategory" class="bmi-category">Wprowadź dane</div>
+                
+                <div class="bmi-gauge-container">
+                    <div id="bmiMarker" class="bmi-marker"></div>
+                </div>
+                
+                <div style="display:flex; justify-content:space-between; width:100%; font-size:0.75rem; color:var(--text-light); margin-bottom:1rem;">
+                    <span>Niedowaga</span>
+                    <span>Norma</span>
+                    <span>Nadwaga</span>
+                    <span>Otyłość</span>
+                </div>
+
+                <p id="bmiDescription" class="bmi-description">
+                    Wpisz swoją wagę i wzrost, aby otrzymać analizę.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Przepisy -->
+    <section id="recipes">
+        <div class="section-title">
+            <h2>Zdrowe Przepisy</h2>
+            <div class="underline"></div>
+        </div>
+
+        <div class="recipes-grid">
+            <!-- Przepis 1 -->
+            <div class="recipe-card">
+                <img src="https://picsum.photos/seed/oatmeal/400/300" alt="Owsianka" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Energetyczna Owsianka</h3>
+                    <div class="recipe-meta">
+                        <span>⏱️ 10 min</span>
+                        <span>🔥 350 kcal</span>
+                    </div>
+                    <button class="toggle-recipe-btn" onclick="toggleRecipe(this)">Zobacz przepis</button>
+                    <div class="recipe-details">
+                        <p><strong>Składniki:</strong> Płatki owsiane, mleko roślinne, banan, jagody, orzechy włoskie.</p>
+                        <p style="margin-top:8px;"><strong>Przygotowanie:</strong> Zagotuj mleko z płatkami. Podawaj z pokrojonym bananem, jagodami i posiekanymi orzechami.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Przepis 2 -->
+            <div class="recipe-card">
+                <img src="https://picsum.photos/seed/salad/400/300" alt="Sałatka" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Sałatka z Kurczakiem</h3>
+                    <div class="recipe-meta">
+                        <span>⏱️ 20 min</span>
+                        <span>🔥 420 kcal</span>
+                    </div>
+                    <button class="toggle-recipe-btn" onclick="toggleRecipe(this)">Zobacz przepis</button>
+                    <div class="recipe-details">
+                        <p><strong>Składniki:</strong> Pierś z kurczaka, mix sałat, rukola, pomidorki cherry, oliwa z oliwek, sok z cytryny.</p>
+                        <p style="margin-top:8px;"><strong>Przygotowanie:</strong> Podsmaż kurczaka z przyprawami. Wymieszaj warzywa, dodaj kurczaka i skrop sosem z oliwy i cytryny.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Przepis 3 -->
+            <div class="recipe-card">
+                <img src="https://picsum.photos/seed/smoothie/400/300" alt="Smoothie" class="recipe-img">
+                <div class="recipe-content">
+                    <h3 class="recipe-title">Zielony Smoothie</h3>
+                    <div class="recipe-meta">
+                        <span>⏱️ 5 min</span>
+                        <span>🔥 180 kcal</span>
+                    </div>
+                    <button class="toggle-recipe-btn" onclick="toggleRecipe(this)">Zobacz przepis</button>
+                    <div class="recipe-details">
+                        <p><strong>Składniki:</strong> Szpinak, ogórek, zielone jabłko, sok z limonki, woda.</p>
+                        <p style="margin-top:8px;"><strong>Przygotowanie:</strong> Wszystkie składniki zblenduj na gładką masę. Pij od razu po przygotowaniu.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- O Autorze -->
+    <section id="author">
+        <div class="author-section">
+            <img src="https://picsum.photos/seed/damian/200/200" alt="Damian Kita" class="author-avatar">
+            <h2>O Autorze</h2>
+            <p style="max-width: 600px; margin: 0 auto; color: var(--text-light);">
+                Cześć! Jestem Damian Kita. Pasjonuję się promowaniem zdrowego stylu życia, technologiami i sposobami na poprawę jakości codziennego funkcjonowania. 
+                Ta strona została stworzona, aby zainspirować Cię do działania.
+            </p>
+            <a href="https://linktr.ee/kitadamian" target="_blank" class="author-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                Kontakt i więcej (Linktree)
+            </a>
+        </div>
+    </section>
+
+    <!-- Stopka -->
+    <footer>
+        <p>&copy; 2023 Damian Kita. Wszelkie prawa zastrzeżone.</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">Informacje na stronie mają charakter edukacyjny i nie zastępują profesjonalnej porady medycznej.</p>
+    </footer>
+
+    <!-- Skrypty JavaScript -->
+    <script>
+        // --- DARK MODE LOGIC ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        const savedTheme = localStorage.getItem('theme');
+
+        function setTheme(theme) {
+            htmlElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setTheme('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+
+
+        // --- Mobilne Menu ---
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('nav-links');
+        const navItems = document.querySelectorAll('.nav-links a');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // --- Logika Kalkulatora BMI ---
+        function calculateBMI() {
+            const weightInput = document.getElementById('weight');
+            const heightInput = document.getElementById('height');
+            const weightError = document.getElementById('weightError');
+            const heightError = document.getElementById('heightError');
+            
+            const weight = parseFloat(weightInput.value);
+            const heightCm = parseFloat(heightInput.value);
+            
+            let isValid = true;
+
+            if (isNaN(weight) || weight <= 0 || weight > 500) {
+                weightError.style.display = 'block';
+                isValid = false;
+            } else {
+                weightError.style.display = 'none';
+            }
+
+            if (isNaN(heightCm) || heightCm <= 0 || heightCm > 300) {
+                heightError.style.display = 'block';
+                isValid = false;
+            } else {
+                heightError.style.display = 'none';
+            }
+
+            if (!isValid) return;
+
+            const heightM = heightCm / 100;
+            const bmi = weight / (heightM * heightM);
+            const bmiRounded = bmi.toFixed(1);
+
+            let category = '';
+            let color = '';
+            let description = '';
+            let percentage = 0;
+
+            if (bmi < 18.5) {
+                category = 'Niedowaga';
+                color = '#64b5f6';
+                description = 'Twoja masa ciała jest niższa niż norma. Rozważ konsultację z dietetykiem w celu zwiększenia masy ciała w zdrowy sposób.';
+                percentage = (bmi / 18.5) * 18.5;
+            } else if (bmi >= 18.5 && bmi < 25) {
+                category = 'Waga prawidłowa';
+                color = '#81c784';
+                description = 'Gratulacje! Twoja waga jest w normie. Kontynuuj zdrowy styl życia, aby utrzymać ten wynik.';
+                percentage = 18.5 + ((bmi - 18.5) / (25 - 18.5)) * (50 - 18.5);
+            } else if (bmi >= 25 && bmi < 30) {
+                category = 'Nadwaga';
+                color = '#ffb74d';
+                description = 'Masz lekką nadwagę. Warto zwrócić uwagę na dietę i zwiększyć aktywność fizyczną.';
+                percentage = 50 + ((bmi - 25) / (30 - 25)) * (75 - 50);
+            } else {
+                category = 'Otyłość';
+                color = '#e57373';
+                description = 'Wynik wskazuje na otyłość. Zalecamy konsultację ze specjalistą w celu planu zdrowego odchudzania.';
+                percentage = 75 + ((bmi - 30) / 50) * 25;
+                if(percentage > 100) percentage = 100;
+            }
+
+            const resultValueEl = document.getElementById('bmiValue');
+            const resultCategoryEl = document.getElementById('bmiCategory');
+            const resultDescEl = document.getElementById('bmiDescription');
+            const markerEl = document.getElementById('bmiMarker');
+
+            resultValueEl.textContent = bmiRounded;
+            resultCategoryEl.textContent = category;
+            resultCategoryEl.style.color = color;
+            resultDescEl.textContent = description;
+            markerEl.style.left = percentage + '%';
+        }
+
+        function toggleRecipe(btn) {
+            const detailsDiv = btn.nextElementSibling;
+            detailsDiv.classList.toggle('active');
+            
+            if (detailsDiv.classList.contains('active')) {
+                btn.textContent = 'Ukryj przepis';
+                btn.style.background = 'var(--primary-color)';
+                btn.style.color = 'white';
+            } else {
+                btn.textContent = 'Zobacz przepis';
+                btn.style.background = 'transparent';
+                btn.style.color = 'var(--primary-color)';
+            }
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
